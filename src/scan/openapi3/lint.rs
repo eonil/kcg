@@ -84,6 +84,36 @@ impl oa::Schema {
         context.guard_nil_property(&self.discriminator, path.appending("discriminator"), "must be non-`nil` to make prod-type");
         context.guard_nil_property(&self.r#enum, path.appending("enum"), "must be non-`nil` to make prod-type");
         context.guard_some_property(&self.properties, path.appending("properties"), "must be non-`nil` to make prod-type");
+        for x in self.properties.iter() {
+            for (name,xx) in x {
+                use oa::ReferencedOrInlineSchema::*;
+                match xx {
+                    Referenced(_) => (),
+                    Inline(xxx) => xxx.lint_property(path.appending(name), context),
+                }
+            }
+            break
+        }
+    }
+    fn lint_property(&self, path: Path, context: &mut Context) {
+        if self.is_prim_type() {
+            match (self.r#type.str(), self.format.str()) {
+                ("boolean", "") => (),
+                ("boolean", _) => context.error(path, "`boolean` type property should not have `format` defined"),
+                ("integer", "int32") => (),
+                ("integer", "int64") => context.error(path, "`int64` property is not supported due to silent precision loss in JavaScript"),
+                ("integer", _) => context.error(path, "`integer` type property must define `format` to `int32`"),
+                ("number", "float") => (),
+                ("number", "double") => (),
+                ("number", _) => context.error(path, "`number` type property must define `format` to one of `float` or `double`"),
+                ("string", _) => (),
+                ("array", _) => (),
+                (_,_) => context.error(path, "`type` must be set to one of `boolean`, `integer`, `number`, `array` (inline `object` definition is not supported)"),
+            }
+        }
+        else {
+        }
+        
     }
 }
 

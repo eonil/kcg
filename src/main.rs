@@ -41,7 +41,7 @@ fn run() -> Result<(),Box<dyn std::error::Error>> {
         None => (),
         Some(x) => {
             // Scan.
-            let k = oas.scan()?;
+            let k = oas.scan(lint::Path::default())?;
 
             // Code-gen.
             let code = k.code();

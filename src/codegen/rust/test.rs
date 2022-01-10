@@ -34,9 +34,9 @@ fn enum_type_code() {
             fn from_str(s: &str) -> Result<Self, Self::Err> {
                 use Fish::*;
                 match s {
-                    "Whale" => Whale,
-                    "Shrimp" => Shrimp,
-                    _ => return Err("unknown case name".to_string()),
+                    "Whale" => Ok(Whale),
+                    "Shrimp" => Ok(Shrimp),
+                    _ => Err("unknown case name".to_string()),
                 }
             }
         }

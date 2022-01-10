@@ -70,7 +70,7 @@ fn test_reading_new_type_pass() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", x);
     x.check()?;
 
-    let c = b.scan()?;
+    let c = b.scan(Path::default())?;
     assert_eq!(c.types.len(), 1);
     assert_eq!(c.types[0], KType::New(KNewType { 
         name: "Order".to_string(), 
@@ -101,7 +101,7 @@ fn test_reading_enum_type_pass() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", x);
     x.check()?;
 
-    let c = b.scan()?;
+    let c = b.scan(Path::default())?;
     assert_eq!(c.types.len(), 1);
     assert_eq!(c.types[0], KType::Enum(KEnumType {
         name: "Fish".to_string(),
@@ -145,7 +145,7 @@ fn test_reading_sum_type_pass() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", x);
     x.check()?;
 
-    let c = b.scan()?;
+    let c = b.scan(Path::default())?;
     assert_eq!(c.types.len(), 3);
     println!("{:#?}", c);
     assert_eq!(c.types[0], KType::Sum(KSumType { 
@@ -207,7 +207,7 @@ fn test_reading_prod_type_pass() -> Result<(), Box<dyn std::error::Error>> {
     println!("{}", x);
     x.check()?;
 
-    let c = b.scan()?;
+    let c = b.scan(Path::default())?;
     assert_eq!(c.types.len(), 2);
     println!("{:#?}", c);
     assert_eq!(c.types[0], KType::Prod(KProdType { 

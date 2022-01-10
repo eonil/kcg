@@ -10,35 +10,35 @@ components:
         Order:
             type: object
             properties:
-                id: { type: integer }
-                quantity: { type: integer }
+                id: { type: integer, format: int32 }
+                quantity: { type: integer, format: int32 }
 
-        # Fish: 
-        #     type: string
-        #     enum: [Whale, Shrimp]
+        Fish: 
+            type: string
+            enum: [Whale, Shrimp]
 
-        # Pet:
-        #     type: object
-        #     oneOf:
-        #         - $ref: '#/components/schemas/Cat'
-        #         - $ref: '#/components/schemas/Dog'
+        Pet:
+            type: object
+            oneOf:
+                - $ref: '#/components/schemas/Cat'
+                - $ref: '#/components/schemas/Dog'
 
-        # Cat: { type: string }
-        # Dog: { type: string }
+        Cat: { type: string }
+        Dog: { type: string }
         
-        # Ship: 
-        #     type: object
-        #     required: [cargo, crews]
-        #     properties: 
-        #         fuel:
-        #             type: boolean
-        #         cargo:
-        #             $ref: '#/components/schemas/Cargo'
-        #         crews:
-        #             type: array 
-        #             items: 
-        #                 type: string
+        Ship: 
+            type: object
+            required: [cargo, crews]
+            properties: 
+                fuel:
+                    type: boolean
+                cargo:
+                    $ref: '#/components/schemas/Cargo'
+                crews:
+                    type: array 
+                    items: 
+                        type: string
 
-        # Cargo: 
-        #     type: object
-        #     properties: {}
+        Cargo: 
+            type: object
+            properties: {}

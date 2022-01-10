@@ -52,7 +52,7 @@ struct LintError(Vec<Log>);
 impl std::fmt::Display for LintError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> { 
         for x in self.0.iter() {
-            f.write_fmt(format_args!("{}", x))?;
+            f.write_fmt(format_args!("- {}\n", x))?;
         }
         Ok(())
     }

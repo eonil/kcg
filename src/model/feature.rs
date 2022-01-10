@@ -1,7 +1,7 @@
-//! HTTP-based REST-like service definition.
 use serde_derive::{Serialize,Deserialize};
 use super::message::*;
 
+/// HTTP-based REST-like service.
 #[derive(Serialize,Deserialize)]
 #[derive(Eq,PartialEq)]
 #[derive(Default)]

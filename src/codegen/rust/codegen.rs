@@ -6,9 +6,11 @@ use crate::codegen::*;
 impl CodeGen for Doc1 {
     fn code(&self) -> String {
         // TODO: Implement `funcs` code-gen.
-        formatdoc!("            
+        formatdoc!(r#"
+            use serde_derive::{{Serialize, Deserialize}};
+
             {types}
-        ",
+        "#,
         types=self.types.code())
     }
 }
@@ -47,7 +49,7 @@ impl CodeGen for message::KEnumType {
                     use {name}::*;
                     match s {{
             {from_str_cases}
-                        _ => return Err("unknown case name".to_string()),
+                        _ => Err("unknown case name".to_string()),
                     }}
                 }}
             }}
@@ -67,7 +69,7 @@ impl CodeGen for message::KEnumType {
     }
 }
 fn from_str_code(s:&message::KEnumTypeCase) -> String {
-    format!(r#""{}" => {},"#, s.name, s.name)
+    format!(r#""{}" => Ok({}),"#, s.name, s.name)
 }
 fn to_str_code(s:&message::KEnumTypeCase) -> String {
     format!(r#"{} => "{}".to_string(),"#, s.name, s.name)
