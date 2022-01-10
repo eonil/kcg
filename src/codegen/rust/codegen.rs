@@ -17,6 +17,7 @@ impl CodeGen for message::KType {
         use message::KType::*;
         match self {
             New(x) => x.code(),
+            Enum(x) => x.code(),
             Sum(x) => x.code(),
             Prod(x) => x.code(),
         }
@@ -29,6 +30,54 @@ impl CodeGen for message::KNewType {
         ",
         name=self.name,
         origin=self.origin.code())
+    }
+}
+impl CodeGen for message::KEnumType {
+    fn code(&self) -> String {
+        formatdoc!(r#"
+            #[derive(Serialize,Deserialize)]
+            #[derive(Eq,PartialEq)]
+            #[derive(Debug)]
+            pub enum {name} {{
+            {cases}
+            }}
+            impl std::str::FromStr for {name} {{
+                type Err = String;
+                fn from_str(s: &str) -> Result<Self, Self::Err> {{
+                    use {name}::*;
+                    match s {{
+            {from_str_cases}
+                        _ => return Err("unknown case name".to_string()),
+                    }}
+                }}
+            }}
+            impl std::string::ToString for {name} {{
+                fn to_string(&self) -> String {{
+                    use {name}::*;
+                    match self {{
+            {to_str_cases}
+                    }}
+                }}
+            }}
+        "#,
+        name=self.name,
+        cases=self.cases.code().indent(),
+        from_str_cases=self.cases.iter().map(from_str_code).collect::<Vec<_>>().join("\n").indent().indent().indent(),
+        to_str_cases=self.cases.iter().map(to_str_code).collect::<Vec<_>>().join("\n").indent().indent().indent())
+    }
+}
+fn from_str_code(s:&message::KEnumTypeCase) -> String {
+    format!(r#""{}" => {},"#, s.name, s.name)
+}
+fn to_str_code(s:&message::KEnumTypeCase) -> String {
+    format!(r#"{} => "{}".to_string(),"#, s.name, s.name)
+}
+impl CodeGen for message::KEnumTypeCase {
+    fn code(&self) -> String {
+        formatdoc!("
+            {name},
+        ",
+        name=self.name)
     }
 }
 impl CodeGen for message::KSumType {

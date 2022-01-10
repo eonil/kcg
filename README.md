@@ -50,6 +50,19 @@ New-type.
         schemas:
             Order: { type: string }
 
+Enum-type.
+
+    openapi: 3.0.1
+    info:
+        title: Swagger Petstore
+        version: 1.2.3
+    paths: {}
+    components:
+        schemas:
+            Fish: 
+                type: string
+                enum: [Whale, Shrimp]
+
 Sum-type.
 
     openapi: 3.0.1

@@ -80,6 +80,47 @@ fn test_reading_new_type_pass() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn test_reading_enum_type_pass() -> Result<(), Box<dyn std::error::Error>> {
+    let a = indoc!(r#"
+        openapi: 3.0.1
+        info:
+            title: Swagger Petstore
+            version: 1.2.3
+        paths: {}
+        components:
+            schemas:
+                Fish: 
+                    type: string
+                    enum: [Whale, Shrimp]
+
+    "#);
+    let b = serde_yaml::from_str::<Doc>(a)?;
+    
+    let mut x = Context::default();
+    b.lint(Path::default(), &mut x);
+    println!("{}", x);
+    x.check()?;
+
+    let c = b.scan()?;
+    assert_eq!(c.types.len(), 1);
+    assert_eq!(c.types[0], KType::Enum(KEnumType {
+        name: "Fish".to_string(),
+        cases: vec![
+            KEnumTypeCase {
+                name: "Whale".to_string(),
+                comment: "".to_string(),
+            },
+            KEnumTypeCase {
+                name: "Shrimp".to_string(),
+                comment: "".to_string(),
+            },
+        ],
+        comment: "".to_string(),
+    }));
+    Ok(())
+}
+
+#[test]
 fn test_reading_sum_type_pass() -> Result<(), Box<dyn std::error::Error>> {
     let a = indoc!(r#"
         openapi: 3.0.1

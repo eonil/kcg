@@ -40,11 +40,12 @@ impl oa::ReferencedOrInlineSchema {
 }
 impl oa::Schema {
     fn scan_type(&self, name: &str) -> Result<KType> {
-        let x = match (self.r#type.str(), &self.one_of) {
-            ("string", _) => KType::New(self.scan_new_type(name)?),
-            ("object", Some(_)) => KType::Sum(self.scan_sum_type(name)?),
-            ("object", None) => KType::Prod(self.scan_prod_type(name)?),
-            _ => return err("unknown/unsupported schema pattern (none of new/sum/prod type)"),
+        let x = match (self.r#type.str(), self.is_prim_type(), &self.one_of, &self.r#enum) {
+            (_, true, None, None) => KType::New(self.scan_new_type(name)?),
+            (_, true, None, Some(_)) => KType::Enum(self.scan_enum_type(name)?),
+            ("object", false, Some(_), None) => KType::Sum(self.scan_sum_type(name)?),
+            ("object", false, None, None) => KType::Prod(self.scan_prod_type(name)?),
+            _ => return err("unknown/unsupported schema pattern (none of new/enum/sum/prod type)"),
         };
         Ok(x)
     }
@@ -53,6 +54,28 @@ impl oa::Schema {
         Ok(KNewType {
             name: name.to_string(),
             origin: KTypeRef::Prim(self.scan_prim_type()?), 
+            comment: self.scan_composed_comment(),
+        })
+    }
+    fn scan_enum_type(&self, name: &str) -> Result<KEnumType> {
+        if self.r#type.str() != "string" { return err("enum-type must be JSON String form (we do not support non-string new-types)") }
+        let mut cases = Vec::new(); 
+        for xx in self.r#enum.iter() {
+            for x in xx {
+                let case = match x {
+                    serde_json::Value::String(case) => case,
+                    _ => return err("enum-type case must be JSON String type (no support for other types)"),
+                };
+                cases.push(KEnumTypeCase {
+                    name: case.to_string(),
+                    comment: "".to_string(),
+                });
+            }
+            break;
+        }
+        Ok(KEnumType {
+            name: name.to_string(),
+            cases: cases,
             comment: self.scan_composed_comment(),
         })
     }

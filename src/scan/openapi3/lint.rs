@@ -1,3 +1,4 @@
+use extend::ext;
 use super::model as oa;
 use crate::lint::*;
 
@@ -43,46 +44,39 @@ impl Lint for oa::Schema {
         context.guard_nil_property_for_unsupported_feature(&self.any_of, path.appending("anyOf"), "property for unsupported feature has non-`nil` value");
         context.guard_nil_property_for_unsupported_feature(&self.format, path.appending("format"), "property for unsupported feature has non-`nil` value");
         context.guard_nil_property_for_unsupported_feature(&self.not, path.appending("not"), "property for unsupported feature has non-`nil` value");
-        let det = self.is_new_type(path.clone(), context)
-             || self.is_sum_type(path.clone(), context)
-             || self.is_prod_type(path.clone(), context);
-        if !det {
-            context.error(path.clone(), "unknown/unsupported pattern of schema (none of new-type/sum-type/prod-type)");
-        }
+        let x = match (self.r#type.str(), self.is_prim_type(), &self.one_of, &self.r#enum) {
+            (_, true, None, None) => self.lint_new_type(path.clone(), context),
+            (_, true, None, Some(_)) => self.lint_enum_type(path.clone(), context),
+            ("object", false, Some(_), None) => self.lint_sum_type(path.clone(), context),
+            ("object", false, None, None) => self.lint_prod_type(path.clone(), context),
+            _ => return context.error(path, "unknown/unsupported schema pattern (none of new/enum/sum/prod type)"),
+        };
     }
 }
 impl oa::Schema {
-    fn is_new_type(self: &Self, path: Path, context: &mut Context) -> bool {
-        let x = self.r#type.as_ref().map(|x| &x[..]).unwrap_or("");
-        match x {
-            "boolean" | "number" | "string" => (),
-            _ => return false,
-        };
-        // Now this is a new-type.
+    fn lint_new_type(&self, path: Path, context: &mut Context) {
         context.guard_nil_property(&self.items, path.appending("items"), "must be `nil` to make new-type");
         context.guard_nil_property(&self.all_of, path.appending("allOf"), "must be `nil` to make new-type");
         context.guard_nil_property(&self.format, path.appending("format"), "must be `nil` to make new-type");
         context.guard_nil_property(&self.any_of, path.appending("anyOf"), "must be `nil` to make new-type");
         context.guard_nil_property(&self.properties, path.appending("properties"), "must be `nil` to make new-type");
-        context.guard_nil_property(&self.r#enum, path.appending("enum"), "must be `nil` to make new-type");
-        true
     }
-    fn is_sum_type(self: &Self, path: Path, context: &mut Context) -> bool {
-        if !(self.r#type.as_ref().map(|x| x == "object").unwrap_or(false)) { return false }
-        if self.one_of == None { return false }
-        // Now this is a sum-type.
+    fn lint_enum_type(self: &Self, path: Path, context: &mut Context) {
+        context.guard_nil_property(&self.items, path.appending("items"), "must be `nil` to make new-type");
+        context.guard_nil_property(&self.all_of, path.appending("allOf"), "must be `nil` to make new-type");
+        context.guard_nil_property(&self.format, path.appending("format"), "must be `nil` to make new-type");
+        context.guard_nil_property(&self.any_of, path.appending("anyOf"), "must be `nil` to make new-type");
+        context.guard_nil_property(&self.properties, path.appending("properties"), "must be `nil` to make new-type");
+    }
+    fn lint_sum_type(self: &Self, path: Path, context: &mut Context) {
         context.guard_nil_property(&self.items, path.appending("items"), "must be `nil` to make sum-type");
         context.guard_nil_property(&self.format, path.appending("allOf"), "must be `nil` to make sum-type");
         context.guard_nil_property(&self.any_of, path.appending("anyOf"), "must be `nil` to make sum-type");
         context.guard_nil_property(&self.properties, path.appending("properties"), "must be `nil` to make sum-type");
         context.guard_nil_property(&self.r#enum, path.appending("enum"), "must be `nil` to make sum-type");
         context.guard_some_property(&self.one_of, path.appending("oneOf"), "must be non-`nil` to make sum-type");
-        true
     }
-    fn is_prod_type(self: &Self, path: Path, context: &mut Context) -> bool {
-        if !(self.r#type.as_ref().map(|x| x == "object").unwrap_or(false)) { return false }
-        if self.properties == None { return false }
-        // Now this is a prod-type.
+    fn lint_prod_type(self: &Self, path: Path, context: &mut Context) {
         context.guard_nil_property(&self.items, path.appending("items"), "must be non-`nil` to make prod-type");
         context.guard_nil_property(&self.format, path.appending("allOf"), "must be non-`nil` to make prod-type");
         context.guard_nil_property(&self.any_of, path.appending("anyOf"), "must be non-`nil` to make prod-type");
@@ -90,7 +84,6 @@ impl oa::Schema {
         context.guard_nil_property(&self.discriminator, path.appending("discriminator"), "must be non-`nil` to make prod-type");
         context.guard_nil_property(&self.r#enum, path.appending("enum"), "must be non-`nil` to make prod-type");
         context.guard_some_property(&self.properties, path.appending("properties"), "must be non-`nil` to make prod-type");
-        true
     }
 }
 
@@ -131,5 +124,17 @@ impl Context {
     }
     fn guard(self: &mut Self, condition: bool, path: Path, message: &'static str) {
         if !condition { self.error(path, message) }
+    }
+}
+
+
+
+#[ext(name=OptionStringUtil)]
+impl Option<String> {
+    fn str(&self) -> &str {
+        match self {
+            None => "",
+            Some(x) => &*x,
+        }
     }
 }

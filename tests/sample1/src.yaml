@@ -1,0 +1,44 @@
+
+openapi: 3.0.1
+info:
+    title: Swagger Petstore
+    version: 1.2.3
+paths: {}
+
+components:
+    schemas: 
+        Order:
+            type: object
+            properties:
+                id: { type: integer }
+                quantity: { type: integer }
+
+        # Fish: 
+        #     type: string
+        #     enum: [Whale, Shrimp]
+
+        # Pet:
+        #     type: object
+        #     oneOf:
+        #         - $ref: '#/components/schemas/Cat'
+        #         - $ref: '#/components/schemas/Dog'
+
+        # Cat: { type: string }
+        # Dog: { type: string }
+        
+        # Ship: 
+        #     type: object
+        #     required: [cargo, crews]
+        #     properties: 
+        #         fuel:
+        #             type: boolean
+        #         cargo:
+        #             $ref: '#/components/schemas/Cargo'
+        #         crews:
+        #             type: array 
+        #             items: 
+        #                 type: string
+
+        # Cargo: 
+        #     type: object
+        #     properties: {}

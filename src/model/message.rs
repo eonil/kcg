@@ -12,6 +12,7 @@ use serde_derive::{Serialize, Deserialize};
 #[derive(Debug)]
 pub enum KType {
     New(KNewType),
+    Enum(KEnumType),
     Sum(KSumType),
     Prod(KProdType),
 }
@@ -23,6 +24,28 @@ pub enum KType {
 pub struct KNewType {
     pub name: String,
     pub origin: KTypeRef,
+    pub comment: String,
+}
+
+/// Finite constant value set.
+/// Rust code-gen provides automatic enum/string conversion.
+#[derive(Serialize,Deserialize)]
+#[derive(Eq,PartialEq)]
+#[derive(Default)]
+#[derive(Debug)]
+pub struct KEnumType {
+    pub name: String,
+    pub cases: Vec<KEnumTypeCase>,
+    pub comment: String,
+}
+#[derive(Serialize,Deserialize)]
+#[derive(Eq,PartialEq)]
+#[derive(Default)]
+#[derive(Debug)]
+pub struct KEnumTypeCase {
+    pub name: String,
+    // /// Underlying value for this case.
+    // pub value: Option<i32>,
     pub comment: String,
 }
 

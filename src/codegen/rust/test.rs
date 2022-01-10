@@ -5,6 +5,54 @@ use crate::model::message::*;
 use crate::codegen::CodeGen;
 
 #[test]
+fn enum_type_code() {
+    let a = KType::Enum(KEnumType {
+        name: "Fish".to_string(),
+        cases: vec![
+            KEnumTypeCase {
+                name: "Whale".to_string(),
+                comment: "".to_string(),
+            },
+            KEnumTypeCase {
+                name: "Shrimp".to_string(),
+                comment: "".to_string(),
+            },
+        ],
+        comment: "".to_string(),
+    });
+    let b = a.code();
+    assert_eq!(b.trim(), indoc!(r#"
+        #[derive(Serialize,Deserialize)]
+        #[derive(Eq,PartialEq)]
+        #[derive(Debug)]
+        pub enum Fish {
+            Whale,
+            Shrimp,
+        }
+        impl std::str::FromStr for Fish {
+            type Err = String;
+            fn from_str(s: &str) -> Result<Self, Self::Err> {
+                use Fish::*;
+                match s {
+                    "Whale" => Whale,
+                    "Shrimp" => Shrimp,
+                    _ => return Err("unknown case name".to_string()),
+                }
+            }
+        }
+        impl std::string::ToString for Fish {
+            fn to_string(&self) -> String {
+                use Fish::*;
+                match self {
+                    Whale => "Whale".to_string(),
+                    Shrimp => "Shrimp".to_string(),
+                }
+            }
+        }
+    "#).trim());
+}
+
+#[test]
 fn sum_type_code() {
     let a = KType::Sum(KSumType { 
         name: "Pet".to_string(), 
