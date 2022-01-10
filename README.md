@@ -119,6 +119,7 @@ Design Choices
     - Use compiled Rust program for dynamic data instance validation.
 - Only these features will be supported.
     - New-type.
+    - Enum-type. (finite constant set)
     - Sum-type. (both name-based and type-based variants)
     - Product-type.
     - Primitive-type. (`bool`, `i32`, `i64`, `f32`, `f64`, `String`)
