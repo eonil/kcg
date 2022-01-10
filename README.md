@@ -120,5 +120,8 @@ Design Choices
 
 
 
-Schema Model
-------------
+
+License
+-------
+Using this code is licensed under "MIT License".
+Copyright(c) 2022, Eonil. All rights reserved.
