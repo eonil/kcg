@@ -15,6 +15,7 @@ indoc = "1.0"
 itertools = "0.10.3"
 extend = "1.1.2"
 linear-map = { version = "1.2.0", features = ["serde_impl"] }
+structopt = { version = "0.3", default-features = false }
 
 [lib]
 path = "src/lib.rs"

@@ -1,4 +1,4 @@
-mod model;
+pub mod model;
 mod lint;
 mod scan;
 mod test;
