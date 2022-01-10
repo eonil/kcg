@@ -124,4 +124,6 @@ Design Choices
 License
 -------
 Using this code is licensed under "MIT License".
+Contributions will also be licensed under same license.
+Contributions mean agreement on this licensing terms.
 Copyright(c) 2022, Eonil. All rights reserved.
