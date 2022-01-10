@@ -16,6 +16,17 @@ pub enum KType {
     Sum(KSumType),
     Prod(KProdType),
 }
+impl KType {
+    pub fn name(&self) -> &str {
+        use KType::*;
+        match self {
+            New(x) => x.name.as_str(),
+            Enum(x) => x.name.as_str(),
+            Sum(x) => x.name.as_str(),
+            Prod(x) => x.name.as_str(),
+        }
+    }
+}
 
 #[derive(Serialize,Deserialize)]
 #[derive(Eq,PartialEq)]

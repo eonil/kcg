@@ -170,7 +170,7 @@ impl oa::Schema {
         }
         Ok(z)
     }
-    fn scan_composed_comment(&self, path: lint::Path) -> String {
+    fn scan_composed_comment(&self, _path: lint::Path) -> String {
         let a = self.title.str();
         let b = self.summary.str();
         let c = self.description.str();
@@ -226,7 +226,7 @@ impl oa::Schema {
 }
 
 impl oa::Reference {
-    fn scan_referenced_type_name(&self, path: lint::Path) -> &str {
+    fn scan_referenced_type_name(&self, _path: lint::Path) -> &str {
         self.r#ref.split("/").last().unwrap_or("")
     }
 }

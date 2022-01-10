@@ -2,7 +2,7 @@
 
 rm -rf ./tmp
 mkdir -p ./tmp/sample1/src
-cargo run -- tests/sample1/src.yaml tmp/sample1/src/lib.rs
+cargo run -- tests/sample1/src.yaml tmp/sample1/src/lib.rs --include ./tests/sample1/prelude.rs --skip Ship
 
 cd tmp/sample1
 cargo init --lib

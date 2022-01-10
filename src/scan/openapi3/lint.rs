@@ -44,7 +44,7 @@ impl Lint for oa::Schema {
         context.guard_nil_property_for_unsupported_feature(&self.any_of, path.appending("anyOf"), "property for unsupported feature has non-`nil` value");
         context.guard_nil_property_for_unsupported_feature(&self.format, path.appending("format"), "property for unsupported feature has non-`nil` value");
         context.guard_nil_property_for_unsupported_feature(&self.not, path.appending("not"), "property for unsupported feature has non-`nil` value");
-        let x = match (self.r#type.str(), self.is_prim_type(), &self.one_of, &self.r#enum) {
+        match (self.r#type.str(), self.is_prim_type(), &self.one_of, &self.r#enum) {
             (_, true, None, None) => self.lint_new_type(path.clone(), context),
             (_, true, None, Some(_)) => self.lint_enum_type(path.clone(), context),
             ("object", false, Some(_), None) => self.lint_sum_type(path.clone(), context),

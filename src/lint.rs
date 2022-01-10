@@ -115,8 +115,8 @@ impl std::fmt::Display for Log {
 #[derive(Eq,PartialEq)]
 #[derive(Debug)]
 pub enum Severity {
-    Info,
-    Warning,
+    // Info,
+    // Warning,
     Error,
 }
 pub type RCString = std::rc::Rc<String>;

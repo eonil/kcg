@@ -2,11 +2,8 @@
 
 use indoc::indoc;
 use crate::lint::*;
-use crate::model::Doc1;
 use crate::model::message::*;
-use super::lint::*;
 use super::model::*;
-use super::scan;
 
 #[test]
 fn test_reading_openapi_spec() -> Result<(), serde_yaml::Error> {

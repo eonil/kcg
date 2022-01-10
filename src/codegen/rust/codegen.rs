@@ -3,6 +3,23 @@ use indoc::formatdoc;
 use crate::model::*;
 use crate::codegen::*;
 
+impl Doc1 {
+    pub fn code(&self, skipping_type_names: &[String]) -> String {
+        // TODO: Implement `funcs` code-gen.
+        let mut types_codes = Vec::new();
+        for x in self.types.iter() {
+            if !skipping_type_names.contains(&x.name().to_string()) {
+                types_codes.push(x.code());
+            }
+        }
+        formatdoc!(r#"
+            use serde_derive::{{Serialize, Deserialize}};
+            {types}
+        "#,
+        types=types_codes.join(""))
+        // types=self.types.iter().filter(|x| !skipping_type_names.contains(&x.name().to_string())).collect::<Vec<_>>().code())
+    }
+}
 impl CodeGen for Doc1 {
     fn code(&self) -> String {
         // TODO: Implement `funcs` code-gen.
