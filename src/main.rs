@@ -30,8 +30,11 @@ struct Opt {
 
 fn main() {
     match run() {
-        Err(x) => println!("{}", x),
-        Ok(_) => (),
+        Ok(_) => std::process::exit(0),
+        Err(x) => {
+            println!("{}", x);
+            std::process::exit(1);
+        },
     }
 }
 fn run() -> Result<(),Box<dyn std::error::Error>> {
