@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -e 
 
 rm -rf ./tmp
 mkdir -p ./tmp/sample1/src

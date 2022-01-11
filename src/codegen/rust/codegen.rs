@@ -101,15 +101,17 @@ impl CodeGen for message::KEnumTypeCase {
 }
 impl CodeGen for message::KSumType {
     fn code(&self) -> String {
-        formatdoc!("
+        formatdoc!(r#"
             {comment}
             #[derive(Serialize,Deserialize)]
             #[derive(Eq,PartialEq)]
             #[derive(Debug)]
+            #[serde(tag="{tag}")]
             pub enum {name} {{
             {variants}
             }}
-        ",
+        "#,
+        tag=self.discriminant,
         comment=self.comment.code_documentation(),
         name=self.name,
         variants=self.variants.code().indent())

@@ -75,6 +75,11 @@ impl oa::Schema {
         context.guard_nil_property(&self.properties, path.appending("properties"), "must be `nil` to make sum-type");
         context.guard_nil_property(&self.r#enum, path.appending("enum"), "must be `nil` to make sum-type");
         context.guard_some_property(&self.one_of, path.appending("oneOf"), "must be non-`nil` to make sum-type");
+        context.guard_some_property(&self.discriminator, path.appending("discriminator"), "must be non-`nil` to make sum-type");
+        match self.discriminator.as_ref() {
+            None => (),
+            Some(det) => det.lint(path.appending("discriminator"), context),
+        }
     }
     fn lint_prod_type(self: &Self, path: Path, context: &mut Context) {
         context.guard_nil_property(&self.items, path.appending("items"), "must be non-`nil` to make prod-type");
@@ -114,6 +119,11 @@ impl oa::Schema {
         else {
         }
         
+    }
+}
+impl Lint for oa::Discriminator {
+    fn lint<'a>(self: &Self, path: Path, context: &mut Context) {
+        context.guard_nil_property_for_unsupported_feature(&self.mapping, path.appending("propertyName"), "must be non-`nil` to make sum-type");
     }
 }
 

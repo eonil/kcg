@@ -132,6 +132,9 @@ fn test_reading_sum_type_pass() -> Result<(), Box<dyn std::error::Error>> {
                     oneOf:
                         - $ref: '#/components/schemas/Cat'
                         - $ref: '#/components/schemas/Dog'
+                    discriminator:
+                        propertyName: type
+
                 Cat: { type: string }
                 Dog: { type: string }
     "#);
@@ -147,6 +150,7 @@ fn test_reading_sum_type_pass() -> Result<(), Box<dyn std::error::Error>> {
     println!("{:#?}", c);
     assert_eq!(c.types[0], KType::Sum(KSumType { 
         name: "Pet".to_string(), 
+        discriminant: "type".to_string(),
         variants: vec![
             KSumTypeVariant {
                 name: "Cat".to_string(),

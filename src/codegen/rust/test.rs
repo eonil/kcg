@@ -56,6 +56,7 @@ fn enum_type_code() {
 fn sum_type_code() {
     let a = KType::Sum(KSumType { 
         name: "Pet".to_string(), 
+        discriminant: "type".to_string(),
         variants: vec![
             KSumTypeVariant {
                 name: "Cat".to_string(),
@@ -78,15 +79,16 @@ fn sum_type_code() {
         ], 
         comment: "".to_string() });
     let b = a.code();
-    assert_eq!(b.trim(), indoc!("
+    assert_eq!(b.trim(), indoc!(r#"
         #[derive(Serialize,Deserialize)]
         #[derive(Eq,PartialEq)]
         #[derive(Debug)]
+        #[serde(tag="type")]
         pub enum Pet {
             Cat(Cat),
             Dog(Dog),
         }
-    ").trim());
+    "#).trim());
 }
 
 #[test]

@@ -84,9 +84,14 @@ impl oa::Schema {
         if self.r#type.str() != "object" { return err(&path, "sum-type must be JSON Object form") }
         Ok(KSumType {
             name: name.to_string(),
+            discriminant: self.scan_sum_type_discriminat(path.clone())?,
             variants: self.scan_sum_type_variants(path.clone())?,
             comment: self.scan_composed_comment(path.clone()),
         })
+    }
+    fn scan_sum_type_discriminat(&self, path: lint::Path) -> Result<String> {
+        let det = self.discriminator.guard(&path.appending("discriminator"), "missing `discriminator` object")?;
+        Ok(det.property_name.clone())
     }
     fn scan_sum_type_variants(&self, path: lint::Path) -> Result<Vec<KSumTypeVariant>> {
         type KK = oa::ReferencedOrInlineSchema;

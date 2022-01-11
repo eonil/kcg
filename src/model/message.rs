@@ -1,7 +1,7 @@
 //! Defines model of KCG.
 //! 
 //! KCG can build its own model by scanning other datastructure schema.
-//! For OpenAPI 3.0 Schema, KCG find certain pattern to build certain types.
+//! For OpenAPI 3.0 Schema, KCG finds certain patterns to build certain types.
 //! 
 //! All types are `K` prefixed which means "Schema".
 
@@ -66,6 +66,9 @@ pub struct KEnumTypeCase {
 #[derive(Debug)]
 pub struct KSumType {
     pub name: String,
+    /// Discriminant field name. 
+    /// This controls how variant discriminants to be serialized.
+    pub discriminant: String,
     pub variants: Vec<KSumTypeVariant>,
     pub comment: String,
 }
