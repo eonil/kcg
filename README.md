@@ -100,6 +100,8 @@ components:
             oneOf:
                 - $ref: '#/components/schemas/Cat'
                 - $ref: '#/components/schemas/Dog'
+            discriminator:
+                propertyName: type
         Cat: { type: string }
         Dog: { type: string }
 ```
