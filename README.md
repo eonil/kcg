@@ -1,3 +1,13 @@
+DEPRECATED
+==========
+DEPRECATED IN FAVOR OF https://github.com/eonil/ridl
+
+
+
+
+
+
+
 KCG
 ===
 Eonil, 2022.
